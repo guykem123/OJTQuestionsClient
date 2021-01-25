@@ -1,0 +1,15 @@
+<mat-toolbar class="app-header" color="blue-dark">
+  <span class="title"> Psychometric Test</span>
+</mat-toolbar>
+<h2 *ngIf="loggedName.length >= 1" class="menu-header">
+  <div class="greeting" color="blue-dark">Welcome Back {{loggedName}}!</div>
+  <div class="menue-button">
+    <a color="blue-dark" routerLink='/manager'> Manger</a>
+  </div>
+  <div class="menue-button">
+    <a color="blue-dark" routerLink='/charts'> Charts</a>
+  </div>
+</h2>
+<div class="app-container">
+  <router-outlet></router-outlet>
+</div>

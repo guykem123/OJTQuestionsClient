@@ -1,0 +1,45 @@
+.app-header{
+    position: relative;
+}
+
+
+.menu-header {
+    width: 100%;
+    margin-bottom: 0px;
+    box-shadow: 1px 1px 5px #888888;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+}
+
+.title {
+    font-size: 2.3rem;
+    font-weight: 100;
+}
+
+[color="blue-dark"] {
+    background-color: #444c54;
+    color: white;
+}
+
+.menue-button {
+    margin-left: 1rem;
+    font-size: smaller;
+    text-align: center;
+    height: max-content;
+}
+a[color="blue-dark"], .greeting[color="blue-dark"]{
+    background-color: inherit; 
+    color: #444c54;
+    text-decoration: none;
+}
+
+.greeting{
+    font-size:larger;
+    margin-left: 2rem;
+}
+.app-container{
+    height: 85%;
+}
