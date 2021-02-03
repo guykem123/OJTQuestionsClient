@@ -32,6 +32,10 @@ export class AuthService {
   logout() {
     return this.localStorageService.removeItem("id_token");
   }
+
+  public getToken() {
+    return this.localStorageService.getItem('id_token');
+  }
   private handleError(error: any) {
     let msg = error["error"];
     return throwError(msg);

@@ -72,6 +72,7 @@ export class StackedColumnChartComponent implements OnInit, OnDestroy {
     // Configure columns
     series.columns.template.width = am4core.percent(60);
     series.columns.template.tooltipText = "[bold,white]{name}[/]\n[white,font-size:14px]{categoryX}: {valueY}";
+    //TODO Finish the tooltip HTML text.
 
     // Add label
     let labelBullet = series.bullets.push(new am4charts.LabelBullet());

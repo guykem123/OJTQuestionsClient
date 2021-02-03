@@ -1,15 +1,13 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { ChartsViewComponent } from './charts-page/charts-view/charts-view.component';
-import { ManagerPageComponent } from './questions-management/manager-page/manager-page.component';
-import { LoginComponent } from './users/login/login.component';
+import { Routes, RouterModule, PreloadingStrategy, PreloadAllModules } from '@angular/router';
+import { AuthGuardsService } from 'src/app/Core/authentication/guards/auth-guard.service';
 
+//
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component:LoginComponent },
-  { path: 'manager', component: ManagerPageComponent, },
-  { path: 'charts', component: ChartsViewComponent, }
+  { path: '', redirectTo: 'website', pathMatch: 'full' },
+  { path: 'website', loadChildren:() => import('./features/website/website.module').then(m => m.WebsiteModule) , canActivate:[AuthGuardsService] },
+  { path: 'users', loadChildren:() => import('./features/users/users.module').then(m => m.UsersModule) },
 ];
 
 @NgModule({
@@ -17,3 +15,5 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+
+
