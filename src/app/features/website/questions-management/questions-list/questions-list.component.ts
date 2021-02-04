@@ -15,6 +15,7 @@ import { QuestionsStateService } from 'src/app/core/state-managments/questions-s
 })
 export class QuestionsListComponent implements OnInit, OnChanges {
 
+
   @Input() qTableData: QuestionModel[];
 
   @Output() onQuestionActions: EventEmitter<QuestionModel> = new EventEmitter();
@@ -28,14 +29,16 @@ export class QuestionsListComponent implements OnInit, OnChanges {
   /**While using @viewChild we are basically declaring a reference
   * to a son element that is inside the current component, 
   *can not give it a string and then it will look for the selector or object a
-  *nyway Angular will look for the first match and I will win. */
+  *nyway Angular will look for the first match and I will win. 
+
+  *In this case we want to search for viewChild of type MatSort 
+  *when the event "getAllQuestions().Subscribe" invokes so we 
+  *actually have access to the variable and we initialize the 
+  *sort property of the dataSource of our table.
+  */
   @ViewChild(MatSort) sort: MatSort;
-  /**
-   *In this case we want to search for viewChild of type MatSort 
-   *when the event "getAllQuestions().Subscribe" invokes so we 
-   *actually have access to the variable and we initialize the 
-   *sort property of the dataSource of our table.
-   */
+
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
 

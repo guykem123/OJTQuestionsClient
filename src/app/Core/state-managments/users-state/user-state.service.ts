@@ -16,7 +16,6 @@ export class UserStateService {
       this.mapUserLogged(LoggedInUser);
     }
   }
-//TODO Check Why the service isn't running
 
   isLoggedIn(): boolean {
     const isLoggedIn = JSON.parse(this.localStorageService.getItem('isLogged'));
@@ -31,7 +30,7 @@ export class UserStateService {
     this.sharedUserName.next(user);
   }
 
-  public retrieveMappedLoggedInUserNameState(): Observable<UserModel> {
+  public retrieveMappedLoggedInUser(): Observable<UserModel> {
     return this.sharedUserName.asObservable();
   }
 
