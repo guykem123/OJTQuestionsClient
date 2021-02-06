@@ -3,6 +3,8 @@ import { QuestionModel } from 'src/app/core/models/question.model';
 import { SnackbarService } from 'src/app/core/popup-messages/snackbar/snackbar.service';
 import { QuestionsStateService } from 'src/app/core/state-managments/questions-state/questions-state.service';
 
+import { startOfDay, endOfDay, startOfWeek, startOfMonth } from 'date-fns';
+
 @Component({
   selector: 'app-charts-view',
   templateUrl: './charts-view.component.html',
@@ -10,12 +12,14 @@ import { QuestionsStateService } from 'src/app/core/state-managments/questions-s
 })
 export class ChartsViewComponent implements OnInit {
 
-  qList: QuestionModel[];
+  chartQListTemp: QuestionModel[];
+  qCount: number;//amount of question measured in charts
+  isChanged: boolean;//bool for checking if the chart values has changed in the previous date-range adjust 
   chartsData: any[];
   chartSeries: string[];
+  ranges = { Today: [new Date(), new Date()], 'This Week': [startOfWeek(new Date), new Date()], 'This Month': [startOfMonth(new Date), new Date()] };
 
-//TODO Install ANT and make the date picker
-//TODO Create the popular toggle logic with 'others'
+  //TODO Create toggle logic 'others' in chart
   constructor(private questionsState: QuestionsStateService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
@@ -25,13 +29,15 @@ export class ChartsViewComponent implements OnInit {
   getChartsData() {
     return this.questionsState.retrieveMappedQuestionListState().subscribe(
       res => {
-        this.createChartsObjects(res);
+        this.chartQListTemp = res;
+        this.qCount = res.length;
+        this.createFullChartsObjects(this.chartQListTemp);
       },
       error => this.snackbarService.openSimpleTextSnackBar(`An error occurred, please refresh the page: ${error['message']}`)
     );
   }
 
-  createChartsObjects(questions: QuestionModel[]) {
+  createFullChartsObjects(questions: QuestionModel[]) {
     this.chartsData = [];
     this.chartSeries = [];
     const days = [];
@@ -59,5 +65,34 @@ export class ChartsViewComponent implements OnInit {
     this.chartsData = [...this.chartsData];
     //this.chartSeries = this.chartSeries.sort();
     //TODO Fix the sorting
+  }
+
+  onAdjustDateChange(range: Date[]) {
+    if (range.length == 0 && this.qCount != this.chartQListTemp.length) {
+      this.createFullChartsObjects(this.chartQListTemp);
+      this.qCount = this.chartQListTemp.length;
+      return;
+    }
+    else if (range.length === 0) {
+      return;
+    }
+    try {
+      const qTempList = [];
+      this.chartQListTemp.forEach(q => {
+        const dateCheck = new Date(q.creationDate);
+        if (dateCheck >= startOfDay(range[0]) && dateCheck <= endOfDay(range[1])) {
+          qTempList.push(q);
+        }
+      });
+      if (qTempList.length < 1) {
+        this.isChanged = false;
+        return this.snackbarService.openSimpleTextSnackBar('No questions were created within this date range!');
+      }
+      this.createFullChartsObjects(qTempList);
+      this.qCount = qTempList.length;
+      this.isChanged = true;
+    } catch (error) {
+      this.snackbarService.openSimpleTextSnackBar(error);
+    }
   }
 }
