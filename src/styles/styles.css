@@ -4,15 +4,25 @@
 /*@import "~ng-zorro-antd/ng-zorro-antd.dark.css";*/
 /*@import "~ng-zorro-antd/ng-zorro-antd.compact.css";*/
 /*@import "~ng-zorro-antd/ng-zorro-antd.aliyun.css";*/
+@import "./amCharts/amChartsIndex.css";
+@import "./pipes/smallLettersBoldNumbersPipeStyle.css";
+ /* "node_modules/bootstrap/dist/css/bootstrap.min.css", */
 
 html, body {
     height: 100%;
-    ;
 }
 
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/*class to disable click  any html  elements */
+.isDisabled {
+    color: currentColor;
+    opacity: 0.5;
+    text-decoration: none;
+    pointer-events: none;
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
