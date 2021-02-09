@@ -15,6 +15,7 @@ import { QuestionsStateService } from 'src/app/core/state-managments/questions-s
 })
 export class QuestionsListComponent implements OnInit, OnChanges {
 
+  questionToDeleteID: string;
 
   @Input() qTableData: QuestionModel[];
 
@@ -37,8 +38,6 @@ export class QuestionsListComponent implements OnInit, OnChanges {
   *sort property of the dataSource of our table.
   */
   @ViewChild(MatSort) sort: MatSort;
-
-
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
 
@@ -64,29 +63,9 @@ export class QuestionsListComponent implements OnInit, OnChanges {
     this.dataSource.paginator = this.paginator;
 
   }
+
   openQuestionActions(question?: QuestionModel) {
     this.onQuestionActions.emit(question);
-  }
-
-
-  deleteQuestion(questionId: string) {
-    const dialogRef = this.dialog.open(DialogElementsDialog,
-      { data: { qId: questionId } });
-
-    dialogRef.afterClosed().subscribe(
-      res => {
-        if (res) {
-          this.questionsService.deleteQuestion(questionId).subscribe(
-            data => {
-              this.dataSource.data = this.dataSource.data.filter(ques => ques.id !== questionId);
-              this.snackbars.openSimpleTextSnackBar(data.message);
-              this.questionsState.deleteQuestion(questionId);
-            },
-            error =>this.snackbars.openSimpleTextSnackBar(`${error.message}, please refresh the page`)
-          );
-        }
-      }
-    )
   }
 
   applyFilter(filterValue: string) {
@@ -106,25 +85,49 @@ export class QuestionsListComponent implements OnInit, OnChanges {
     this.dataSource.sort.direction = sortState.direction;//Set the direction of sorting in the datasource
     this.dataSource.sort.sortChange.emit(sortState);//Datasource Invoke the sorting operation
   }
-}
 
-@Component({
-  selector: 'dialog-elements-dialog',
-  template: `<h1 mat-dialog-title>Delete</h1>
-  <div mat-dialog-content>Are you sure you to delete question {{data.qId}}?</div>
-  <div mat-dialog-actions content="end">
-  <button class="btn-dialog can" (click)="confirmDelete()" mat-dialog-close>Cancel</button>
-  
-  <button class="btn-dialog del" (click)="confirmDelete(true)" mat-dialog-close cdkFocusInitial>Yes</button>
-</div>`,
-  styleUrls: ['./questions-list.component.css']
-})
-export class DialogElementsDialog {
-  constructor(
-    public dialogRef: MatDialogRef<DialogElementsDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: { qId: string }) { }
+  deleteQuestion(questionId: string) {
+    if (questionId) {
+      this.questionsService.deleteQuestion(questionId).subscribe(
+        data => {
+          this.questionToDeleteID = undefined;
+          this.dataSource.data = this.dataSource.data.filter(ques => ques.id !== questionId);
+          this.snackbars.openSimpleTextSnackBar(data.message);
+          this.questionsState.deleteQuestion(questionId);
+        },
+        error => this.snackbars.openSimpleTextSnackBar(`${error.message}, please refresh the page and try again if necessary`)
+      );
+    }
+  }
 
-  confirmDelete(confirmDelete?: boolean) {
-    this.dialogRef.close(confirmDelete);
+  openDeleteModal(selectedQuestionId: string) {
+    this.questionToDeleteID = selectedQuestionId;
+  }
+
+  closeDeleteModal(event: any) {
+    if (event.target.id === "id01" || event.target.id === "cancelDelModal") {
+      this.questionToDeleteID = undefined;
+    }
   }
 }
+
+// @Component({
+//   selector: 'dialog-elements-dialog',
+//   template: `<h1 mat-dialog-title>Delete</h1>
+//   <div mat-dialog-content>Are you sure you to delete question {{data.qId}}?</div>
+//   <div mat-dialog-actions content="end">
+//   <button class="btn-dialog can" (click)="confirmDelete()" mat-dialog-close>Cancel</button>
+  
+//   <button class="btn-dialog del" (click)="confirmDelete(true)" mat-dialog-close cdkFocusInitial>Yes</button>
+// </div>`,
+//   styleUrls: ['./questions-list.component.css']
+// })
+// export class DialogElementsDialog {
+//   constructor(
+//     public dialogRef: MatDialogRef<DialogElementsDialog>,
+//     @Inject(MAT_DIALOG_DATA) public data: { qId: string }) { }
+
+//   confirmDelete(confirmDelete?: boolean) {
+//     this.dialogRef.close(confirmDelete);
+//   }
+// }

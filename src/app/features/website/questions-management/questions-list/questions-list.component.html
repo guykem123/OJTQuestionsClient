@@ -24,7 +24,8 @@
             <!-- ID Column -->
             <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef> ID</th>
-                <td mat-cell *matCellDef="let question"><span [outerHTML]="question.id | smallLettersBoldNumbers"></span></td>
+                <td mat-cell *matCellDef="let question"><span
+                        [outerHTML]="question.id | smallLettersBoldNumbers"></span></td>
             </ng-container>
             <!--TODO Add the expandeble rows-->
 
@@ -47,7 +48,7 @@
                     <button mat-icon-button (click)="openQuestionActions(question)" color="blue-light">
                         <mat-icon>edit</mat-icon>
                     </button>
-                    <button mat-icon-button (click)="deleteQuestion(question.id)" color="blue-medium">
+                    <button mat-icon-button (click)="openDeleteModal(question.id)" color="blue-medium">
                         <mat-icon>delete_forever</mat-icon>
                     </button>
                 </td>
@@ -64,12 +65,25 @@
         <mat-paginator [pageSizeOptions]="[5, 10]"></mat-paginator>
     </div>
     <div class="bottom-page" content="end">
-        <button (click)="openQuestionActions()" mat-raised-button color="blue-dark">
+        <button (click)="openQuestionActions()" raised-button color="blue-dark">
             Add a question
         </button>
     </div>
 
     <!-- <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span> -->
-    <!--TODO Add the Delete Modal-->
-</div>
 
+    <div id="id01" class="modal" (click)="closeDeleteModal($event)"
+        [ngClass]="{'show-modal': questionToDeleteID && questionToDeleteID.trim() !== '' && questionToDeleteID.length >= 1}">
+        <div class="modal-content animate">
+            <div class="modal-text">
+                <h1>Delete</h1>
+                <div>Are you sure you to delete question {{questionToDeleteID}}?</div>
+            </div>
+            <div class="modal-actions" content="space-between">
+                <button id="cancelDelModal" stroked-button color="blue-dark"class="btn-dialog can"
+                    (click)="closeDeleteModal($event)">Cancel</button>
+                <button class="btn-dialog del" raised-button color="blue-dark" (click)="deleteQuestion(questionToDeleteID)">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
