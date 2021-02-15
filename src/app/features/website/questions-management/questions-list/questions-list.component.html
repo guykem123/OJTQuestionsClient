@@ -24,8 +24,9 @@
             <!-- ID Column -->
             <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef> ID</th>
-                <td mat-cell *matCellDef="let question"><span
-                        [outerHTML]="question.id | smallLettersBoldNumbers"></span></td>
+                <td mat-cell *matCellDef="let question">
+                    <span [outerHTML]="question.id | smallLettersBoldNumbers"></span>
+                </td>
             </ng-container>
             <!--TODO Add the expandeble rows-->
 
@@ -80,9 +81,10 @@
                 <div>Are you sure you to delete question {{questionToDeleteID}}?</div>
             </div>
             <div class="modal-actions" content="space-between">
-                <button id="cancelDelModal" stroked-button  color="blue-dark"class="btn-dialog can"
+                <button id="cancelDelModal" stroked-button color="blue-dark" class="btn-dialog can"
                     (click)="closeDeleteModal($event)">Cancel</button>
-                <button class="btn-dialog del" raised-button  color="blue-dark" (click)="deleteQuestion(questionToDeleteID)">Yes</button>
+                <button class="btn-dialog del" raised-button color="blue-dark"
+                    (click)="deleteQuestion(questionToDeleteID)">Yes</button>
             </div>
         </div>
     </div>

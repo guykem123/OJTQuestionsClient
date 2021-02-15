@@ -12,11 +12,9 @@ import { startOfDay, endOfDay, startOfWeek, startOfMonth } from 'date-fns';
 export class ChartsViewComponent implements OnInit {
 
   /**Full List with all the questions its porpuse is to refill and get all the question if needed without another request */
-  chartQListTemp: IQuestionModel[];
+  chartQListOrigin: IQuestionModel[];
   /**amount of question measured in charts */
   qCount: number;
-  /**bool for checking if the chart values has changed in the previous date-range adjust  */
-  isChanged: boolean;
   /**an object for the date range and its contains a constants ranges to pick in the date range  */
   ranges = { 'Today': [new Date(), new Date()], 'This Week': [startOfWeek(new Date), new Date()], 'This Month': [startOfMonth(new Date), new Date()] };
 
@@ -41,10 +39,10 @@ export class ChartsViewComponent implements OnInit {
   getChartsData() {
     return this.questionsState.retrieveMappedQuestionListState().subscribe(
       res => {
-        this.chartQListTemp = res;
+        this.chartQListOrigin = res;
         this.qCount = res.length;
         this.afterChangeQList = [...res];
-        this.createFullChartsObjects(this.chartQListTemp);
+        this.createFullChartsObjects(this.chartQListOrigin);
       },
       error => this.snackbarService.openSimpleTextSnackBar(`An error occurred, please refresh the page: ${error['message']}`)
     );
@@ -84,15 +82,15 @@ export class ChartsViewComponent implements OnInit {
     this.isPopularAvailable = false;
     if (this.isToggleChecked) {
       await this.toggleChecked(this.afterChangeQList)
-      .catch(err => this.snackbarService.openSimpleTextSnackBar(err.message))
-      .finally(() => { this.isPopularAvailable = true });
+        .catch(err => this.snackbarService.openSimpleTextSnackBar(err.message))
+        .finally(() => { this.isPopularAvailable = true });
     } else {
       await this.toggleUnChecked()
-      .catch(err => this.snackbarService.openSimpleTextSnackBar(err.message))
-      .finally(() => { this.isPopularAvailable = true });
+        .catch(err => this.snackbarService.openSimpleTextSnackBar(err.message))
+        .finally(() => { this.isPopularAvailable = true });
     }
   }
-  
+
   private toggleChecked(questions: IQuestionModel[]): Promise<any> {
     return new Promise((resolve, reject) => {
       this.chartSeries = [];
@@ -177,30 +175,34 @@ export class ChartsViewComponent implements OnInit {
   }
 
   onAdjustDateChange(range: Date[]) {
-    if (range.length == 0 && this.qCount != this.chartQListTemp.length) {
-      !this.isToggleChecked ? this.createFullChartsObjects(this.chartQListTemp) : this.toggleChecked(this.chartQListTemp);
-      this.qCount = this.chartQListTemp.length;
-      this.afterChangeQList = [...this.chartQListTemp];
+    //if range length is zero its means that the user want all the question to the chart,
+    //qCount tells me how many question in the charts, so I check if another request needed
+    // for all the question or if all of them already in I don't do the whole proccess again.
+    if (range.length == 0 && this.qCount != this.chartQListOrigin.length) {
+      !this.isToggleChecked ? this.createFullChartsObjects(this.chartQListOrigin) : this.toggleChecked(this.chartQListOrigin);
+      this.qCount = this.chartQListOrigin.length;
+      this.afterChangeQList = [...this.chartQListOrigin];
       return;
     }
     else if (range.length === 0) {
       return;
     }
     try {
-      this.afterChangeQList = [];
-      this.chartQListTemp.forEach(q => {
+      //new temp list because if there is no results, I don't 
+      //want the afterChangeQList to change its current state.
+      const tempList = [];
+      this.chartQListOrigin.forEach(q => {
         const dateCheck = new Date(q.creationDate);
         if (dateCheck >= startOfDay(range[0]) && dateCheck <= endOfDay(range[1])) {
-          this.afterChangeQList.push(q);
+          tempList.push(q);
         }
       });
-      if (this.afterChangeQList.length < 1) {
-        this.isChanged = false;
+      if (tempList.length < 1) {
         return this.snackbarService.openSimpleTextSnackBar('No questions were created within this date range!');
       }
+      this.afterChangeQList = [...tempList];
       !this.isToggleChecked ? this.createFullChartsObjects(this.afterChangeQList) : this.toggleChecked(this.afterChangeQList);
       this.qCount = this.afterChangeQList.length;
-      this.isChanged = true;
     } catch (error) {
       this.snackbarService.openSimpleTextSnackBar(error.message);
     }

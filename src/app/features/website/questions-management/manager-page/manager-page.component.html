@@ -16,15 +16,13 @@
     
   </mat-drawer-content> 
 </mat-drawer-container> -->
-<!--TODO Create the custom side-bar-->
 
-<div class="manager-container" [ngClass]="{'container-has-open ':isSideBarOpen}">
+<div class="manager-container" [ngClass]="{'side-has-open':isSideBarOpen}">
 
-  <div class="manager-backdrop" [ngClass]="{'sidebar-shown': isSideBarOpen}"></div>
-
-  <div class="sidebar" color="grey-dark" [ngClass]="{'sidebar-open':isSideBarOpen}">
+  <div id="sidebar" class="sidebar" color="grey-dark" [ngClass]="{'sticky': isSticky}"
+    [ngClass]="{'sidebar-open':isSideBarOpen}">
     <app-question-edit [actionedQuestion]="actionedQuestion" (onNewQuestion)="getNewQuestion($event)"
-      (onUpdatededQuestion)="getUpdatedQuestion($event)" (onCancelActions)="closeSideBar('cancel button')">
+      (onUpdatededQuestion)="getUpdatedQuestion($event)" (onCancelActions)="closeSideBar($event)">
     </app-question-edit>
   </div>
 
@@ -32,4 +30,7 @@
     <app-questions-list [qTableData]="qList" (onQuestionActions)="getActionedQuestion($event)">
     </app-questions-list>
   </div>
+
+  <div class="manager-backdrop" [ngClass]="{'sidebar-shown': isSideBarOpen}"></div>
+
 </div>
