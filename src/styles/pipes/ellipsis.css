@@ -3,4 +3,6 @@
     margin: 0.3rem;
     overflow: hidden;
     text-overflow: ellipsis;
+    width: 1px;
+    flex-grow: 1;
 }
